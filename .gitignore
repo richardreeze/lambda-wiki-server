@@ -1,4 +1,5 @@
 node_modules
+dev.js
 .sw[a-p]
 .*.sw[a-p]
 Session.vim
