@@ -12,7 +12,7 @@ module.exports = (passport) => {
       done(err, user);
     });
   });
-  
+
   passport.use('local-signup', new LocalStrategy({
     usernameField : 'email',
     passwordField : 'password',
@@ -20,8 +20,8 @@ module.exports = (passport) => {
   },
 
     (req, email, password, done) => {
-      process.nextTick(() => {
-        User.findOne({ 'local.email' : email}, (err, user) => {
+      // process.nextTick(() => {
+        User.findOne({ 'email' : email}, (err, user) => {
           if (err) {
             return done(err);
           }
@@ -30,8 +30,9 @@ module.exports = (passport) => {
             return done(null, false);
           } else {
             const newUser = new User();
-            newUser.local.email = email;
-            newUser.local.password = newUser.generateHash(password);
+            newUser.email = email;
+            newUser.password = password;
+            console.log(newUser);
 
             newUser.save((err) => {
               if (err) {
@@ -41,7 +42,7 @@ module.exports = (passport) => {
             });
           }
         });
-      });
+      // });
     })
   );
 
@@ -51,7 +52,7 @@ module.exports = (passport) => {
     passReqToCallback : true
   },
     (req, email, password, done) => {
-      User.findOne({ 'local.email' : email }, (err, user) => {
+      User.findOne({ 'email' : email }, (err, user) => {
         if (err) {
           return done(err);
         }

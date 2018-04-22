@@ -9,8 +9,12 @@ module.exports = (app, passport) => {
     res.send('It works!');
   });*/
 
-  app.post('/signup', passport.authenticate('local-signup', {
-    successRedirect : '/profile',
-    failureRedirect : '/'
-  }));
+  app.post('/signup', passport.authenticate('local-signup'), (req, res, next) => {
+    res.send({ success: true });
+    next();
+  });
+  app.post('/login', passport.authenticate('local-login'), (req, res, next) => {
+    res.send({ success: true });
+    next();
+  });
 }
