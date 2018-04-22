@@ -20,7 +20,6 @@ module.exports = (passport) => {
   },
 
     (req, email, password, done) => {
-      // process.nextTick(() => {
         User.findOne({ 'email' : email}, (err, user) => {
           if (err) {
             return done(err);
@@ -32,7 +31,6 @@ module.exports = (passport) => {
             const newUser = new User();
             newUser.email = email;
             newUser.password = password;
-            console.log(newUser);
 
             newUser.save((err) => {
               if (err) {
@@ -42,7 +40,6 @@ module.exports = (passport) => {
             });
           }
         });
-      // });
     })
   );
 
