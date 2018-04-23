@@ -11,7 +11,7 @@ const keys = require('./config/keys');
 
 mongoose.connect(keys.mongoURI);
 
-mongoose.connection.on('connected', function() {
+mongoose.connection.on('connected', () => {
   const acl = new node_acl(new node_acl.mongodbBackend(mongoose.connection.db, 'acl_'));
 
   acl.allow([
@@ -31,21 +31,10 @@ mongoose.connection.on('connected', function() {
       roles: 'guest',
       allows: []
     }
-  ]).then(role => {
-    console.log('allow works');
-  })
-  .catch(err => {
-    console.log('from adding admin: ', err);
-  });
+  ]);
   acl.addRoleParents('user', 'guest');
   acl.addRoleParents('admin', 'user');
-  acl.addUserRoles('5adc5d9dd90ce329ecea6db5', 'admin')
-  .then(role => {
-    console.log(role);
-  })
-  .catch(err => {
-    console.log('from adding admin: ', err);
-  });
+  acl.addUserRoles('5adc5d9dd90ce329ecea6db5', 'admin');
 
   require('./routes/authRoutes')(app, passport);
   require('./routes/entryRoutes')(app, acl);

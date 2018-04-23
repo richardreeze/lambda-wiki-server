@@ -8,8 +8,4 @@ const isAuth = (req, res, next) => {
   }
 };
 
-const isAdmin = (req, res, next) => {
-
-}
-
 module.exports = isAuth;

@@ -11,7 +11,7 @@ const userSchema = new Schema({
   password: {
     required: true,
     type: String,
-  }
+  },
 });
 
 userSchema.pre('save', function(next) {
@@ -21,8 +21,7 @@ userSchema.pre('save', function(next) {
 
       user.password = hashed;
       next();
-  })
-
+  });
 });
 
 userSchema.methods.validPassword = function(password) {
