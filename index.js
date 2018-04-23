@@ -4,14 +4,59 @@ const PORT = process.env.PORT || 5000;
 const mongoose = require('mongoose');
 const passport = require('passport');
 const helmet = require('helmet');
+let node_acl = require('acl');
 
+// const setupAcl = require('./services/acl');
 const keys = require('./config/keys');
+
+mongoose.connect(keys.mongoURI);
+
+mongoose.connection.on('connected', function() {
+  const acl = new node_acl(new node_acl.mongodbBackend(mongoose.connection.db, 'acl_'));
+
+  acl.allow([
+    {
+      roles: 'admin',
+      allows: [
+        { resources: '/test-secret', permissions: '*' }
+      ]
+    },
+    {
+      roles: 'user',
+      allows: [
+        { resources: ['/profile', '/status'], permissions: '*' }
+      ]
+    },
+    {
+      roles: 'guest',
+      allows: []
+    }
+  ]).then(role => {
+    console.log('allow works');
+  })
+  .catch(err => {
+    console.log('from adding admin: ', err);
+  });
+  acl.addRoleParents('user', 'guest');
+  acl.addRoleParents('admin', 'user');
+  acl.addUserRoles('5adc5d9dd90ce329ecea6db5', 'admin')
+  .then(role => {
+    console.log(role);
+  })
+  .catch(err => {
+    console.log('from adding admin: ', err);
+  });
+
+  require('./routes/authRoutes')(app, passport);
+  require('./routes/entryRoutes')(app, acl);
+  require('./routes/userRoutes')(app, acl);
+});
+
 const cookieSession = require('cookie-session');
 
 require('./services/passport')(passport);
 require('./models/User');
 
-mongoose.connect(keys.mongoURI);
 
 app.use(helmet());
 const expire = new Date(Date.now() + 60 * 60 * 1000);
@@ -33,8 +78,15 @@ app.use(express.json());
 app.use(passport.initialize());
 app.use(passport.session());
 
-require('./routes/authRoutes')(app, passport);
-require('./routes/entryRoutes')(app);
+function logger() {
+  return {
+      debug: function( msg ) {
+          console.log( '-DEBUG-', msg );
+      }
+  };
+}
+
+
 
 // if (process.env.NODE_ENV === 'production') {
 //   // Express will serve up production assets (main.js, main.css, etc...)
@@ -49,3 +101,5 @@ require('./routes/entryRoutes')(app);
 
 app.listen(PORT);
 console.log('The magic happens on port ' + PORT);
+
+// module.exports = acl;
