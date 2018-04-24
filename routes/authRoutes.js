@@ -10,17 +10,16 @@ module.exports = (app, passport) => {
     res.send('It works!');
   });*/
 
-  app.post('/signup', passport.authenticate('local-signup'), (req, res, next) => {
+  app.post('/register', passport.authenticate('local-signup'), (req, res, next) => {
     res.send({ success: true });
     next();
   });
   app.post('/login', passport.authenticate('local-login'), (req, res, next) => {
-    console.log(req.session);
+    console.log('login');
     res.send({ success: true });
     next();
   });
   app.post('/logout', isAuth, (req, res, next) => {
-    console.log(res.session);
     req.logout();
     res.send({ success: true });
   });
