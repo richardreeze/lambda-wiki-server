@@ -3,6 +3,10 @@ const bcrypt = require('bcrypt');
 const { Schema } = mongoose;
 
 const userSchema = new Schema({
+  name: {
+    required: true,
+    type: String,
+  },
   email: {
     unique: true,
     required: true,
@@ -12,6 +16,10 @@ const userSchema = new Schema({
     required: true,
     type: String,
   },
+  authored: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Entry',
+  }],
 });
 
 userSchema.pre('save', function(next) {

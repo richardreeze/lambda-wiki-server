@@ -15,7 +15,11 @@ const entrySchema = new Schema({
     type: Boolean,
     required: true,
     default: true,
-  }
+  },
+  author: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 });
 
 module.exports = mongoose.model('Entry', entrySchema);
