@@ -15,7 +15,6 @@ module.exports = (app, passport) => {
     next();
   });
   app.post('/login', passport.authenticate('local-login'), (req, res, next) => {
-    console.log('login');
     res.send({ success: true });
     next();
   });
